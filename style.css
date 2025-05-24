@@ -1,0 +1,89 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+.calculator {
+  width: 320px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+}
+
+.display {
+  width: calc(100% - 20px); /* Account for padding */
+  height: 60px;
+  text-align: right;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 28px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  color: #333;
+  overflow-x: auto; /* Allow horizontal scrolling for long numbers */
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.buttons button {
+  height: 60px;
+  font-size: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #e0e0e0;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.buttons button:hover {
+  background-color: #d0d0d0;
+}
+
+.buttons button:active {
+  background-color: #c0c0c0;
+}
+
+/* Style operators differently */
+.buttons button:nth-child(4n), /* /, *, -, + */
+.buttons button:nth-child(14) /* = */ {
+  background-color: #f0ad4e; /* Orange */
+  color: white;
+}
+
+.buttons button:nth-child(4n):hover,
+.buttons button:nth-child(14):hover {
+  background-color: #ec9a29;
+}
+
+.buttons button:nth-child(4n):active,
+.buttons button:nth-child(14):active {
+  background-color: #d58512;
+}
+
+/* Style Clear button */
+.buttons button:nth-child(13) /* C */ {
+  background-color: #d9534f; /* Red */
+  color: white;
+}
+
+.buttons button:nth-child(13):hover {
+  background-color: #c9302c;
+}
+
+.buttons button:nth-child(13):active {
+  background-color: #ac2925;
+}

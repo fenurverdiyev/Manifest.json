@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Tests</title>
+    <link rel="stylesheet" href="style.css"> <!-- Optional: for better readability -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        #test-results {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .test-case:last-child {
+            border-bottom: none;
+        }
+        .test-name {
+            font-weight: bold;
+        }
+        .pass {
+            color: green;
+        }
+        .fail {
+            color: red;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9f7ef;
+            border: 1px solid #a9d9bb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculator Test Results</h1>
+    <div class="note">
+        <p><strong>Instructions:</strong> Open this file in your web browser to view the test results. The tests are executed automatically when the page loads.</p>
+        <p>This page tests the calculator's core logic by interacting with functions defined in <code>script.js</code>.
+        Make sure <code>script.js</code> and (optionally) <code>style.css</code> are in the same directory as this file.</p>
+    </div>
+    <div id="test-results">
+        <!-- Test results will be appended here by test_runner.js -->
+    </div>
+
+    <!-- Scripts: calculator logic first, then the test runner -->
+    <div id="display" style="display: none;"></div> <!-- Mock display needed by script.js -->
+    <script src="script.js"></script>
+    <script src="test_runner.js"></script>
+</body>
+</html>
