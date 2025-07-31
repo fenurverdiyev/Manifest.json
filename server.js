@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = 8080;
 
 // MIME types for different file extensions
 const mimeTypes = {
@@ -21,6 +21,8 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
+    console.log(`📥 ${new Date().toLocaleTimeString()} - ${req.method} ${req.url}`);
+    
     // Enable CORS for API requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -43,6 +45,7 @@ const server = http.createServer((req, res) => {
     fs.readFile(filePath, (error, content) => {
         if (error) {
             if (error.code === 'ENOENT') {
+                console.log(`❌ 404 - Fayl tapılmadı: ${filePath}`);
                 // File not found
                 res.writeHead(404, { 'Content-Type': 'text/html' });
                 res.end(`
@@ -56,11 +59,13 @@ const server = http.createServer((req, res) => {
                     </html>
                 `);
             } else {
+                console.log(`❌ Server xətası: ${error.code}`);
                 // Server error
                 res.writeHead(500);
                 res.end(`Server xətası: ${error.code}`);
             }
         } else {
+            console.log(`✅ Uğurla göndərildi: ${filePath} (${contentType})`);
             // Success
             res.writeHead(200, { 'Content-Type': contentType });
             res.end(content, 'utf-8');
@@ -73,4 +78,5 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`📱 Browser'də açın: http://localhost:${PORT}`);
     console.log(`🌐 Xarici IP ilə: http://0.0.0.0:${PORT}`);
     console.log(`🛑 Dayandırmaq üçün: Ctrl+C`);
+    console.log(`📂 Serving files from: ${process.cwd()}`);
 });
