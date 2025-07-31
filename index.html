@@ -1,37 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="az">
 <head>
-<title>Calculator</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perplexity AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-search"></i>
+                <h1>Perplexity</h1>
+            </div>
+            <div class="tagline">Where knowledge begins</div>
+        </header>
 
-<div class="calculator">
-  <div class="display" id="display"></div>
-  <div class="buttons">
-    <button onclick="appendToDisplay('7')">7</button>
-    <button onclick="appendToDisplay('8')">8</button>
-    <button onclick="appendToDisplay('9')">9</button>
-    <button onclick="appendToDisplay('/')">/</button>
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Welcome Section -->
+            <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-content">
+                    <h2>Hər hansı bir şey soruşun...</h2>
+                    <p>AI-dan istədiyiniz hər hansı sualın cavabını alın</p>
+                </div>
+            </div>
 
-    <button onclick="appendToDisplay('4')">4</button>
-    <button onclick="appendToDisplay('5')">5</button>
-    <button onclick="appendToDisplay('6')">6</button>
-    <button onclick="appendToDisplay('*')">*</button>
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <div class="messages" id="messages"></div>
+            </div>
 
-    <button onclick="appendToDisplay('1')">1</button>
-    <button onclick="appendToDisplay('2')">2</button>
-    <button onclick="appendToDisplay('3')">3</button>
-    <button onclick="appendToDisplay('-')">-</button>
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-container">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Sualınızı yazın..." 
+                        rows="1"
+                        maxlength="1000"
+                    ></textarea>
+                    <button id="sendButton" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-actions">
+                    <button id="clearButton" class="action-button">
+                        <i class="fas fa-trash"></i>
+                        Təmizlə
+                    </button>
+                </div>
+            </div>
+        </main>
 
-    <button onclick="appendToDisplay('0')">0</button>
-    <button onclick="clearDisplay()">C</button>
-    <button onclick="calculateResult()">=</button>
-    <button onclick="appendToDisplay('+')">+</button>
-  </div>
-</div>
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>AI cavab hazırlayır...</p>
+            </div>
+        </div>
+    </div>
 
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
