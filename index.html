@@ -8,59 +8,179 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-search"></i>
-                <h1>Perplexity</h1>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span class="time">07:47</span>
+            <i class="fas fa-folder"></i>
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="status-right">
+            <i class="fas fa-clock"></i>
+            <i class="fas fa-wifi"></i>
+            <div class="signal-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
-            <div class="tagline">Where knowledge begins</div>
-        </header>
+            <div class="battery">
+                <span>95%</span>
+                <i class="fas fa-battery-three-quarters"></i>
+            </div>
+        </div>
+    </div>
 
-        <!-- Main Content -->
-        <main class="main">
-            <!-- Welcome Section -->
-            <div class="welcome-section" id="welcomeSection">
-                <div class="welcome-content">
-                    <h2>Hər hansı bir şey soruşun...</h2>
-                    <p>AI-dan istədiyiniz hər hansı sualın cavabını alın</p>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="profile-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+        <div class="header-center">
+            <h1>perplexity</h1>
+        </div>
+        <div class="header-right">
+            <i class="fas fa-share-alt"></i>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Screen -->
+        <div class="home-screen" id="homeScreen">
+            <div class="logo-container">
+                <div class="geometric-logo">
+                    <div class="logo-lines">
+                        <div class="line line-1"></div>
+                        <div class="line line-2"></div>
+                        <div class="line line-3"></div>
+                        <div class="line line-4"></div>
+                        <div class="line line-5"></div>
+                        <div class="line line-6"></div>
+                    </div>
                 </div>
             </div>
+            <div class="tagline">
+                <p>Where knowledge begins</p>
+            </div>
+        </div>
 
-            <!-- Chat Container -->
-            <div class="chat-container" id="chatContainer">
-                <div class="messages" id="messages"></div>
+        <!-- Discover Screen -->
+        <div class="discover-screen" id="discoverScreen" style="display: none;">
+            <div class="discover-header">
+                <h2>Discover</h2>
+                <div class="discover-actions">
+                    <i class="fas fa-headphones"></i>
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="navigation-tabs">
+                <button class="tab active" data-tab="for-you">For You</button>
+                <button class="tab" data-tab="top-stories">Top Stories</button>
+                <button class="tab" data-tab="tech">Tech & S</button>
             </div>
 
-            <!-- Input Section -->
-            <div class="input-section">
-                <div class="input-container">
-                    <textarea 
-                        id="userInput" 
-                        placeholder="Sualınızı yazın..." 
-                        rows="1"
-                        maxlength="1000"
-                    ></textarea>
-                    <button id="sendButton" class="send-button">
-                        <i class="fas fa-paper-plane"></i>
+            <div class="content-feed">
+                <div class="article-card">
+                    <div class="article-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkZGRkZGIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjY2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkV4Y2F2YXRvciBpbWFnZTwvdGV4dD4KPC9zdmc+" alt="Excavator">
+                    </div>
+                    <div class="article-content">
+                        <h3>Microsoft reveals which jobs AI threatens most</h3>
+                        <p>Microsoft researchers have mapped the AI revolution's im...</p>
+                        <div class="article-meta">
+                            <div class="source">
+                                <i class="fas fa-desktop"></i>
+                                <span>aaronmut</span>
+                            </div>
+                            <div class="actions">
+                                <i class="fas fa-bookmark"></i>
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Screen -->
+        <div class="voice-screen" id="voiceScreen" style="display: none;">
+            <div class="voice-container">
+                <div class="voice-sphere">
+                    <div class="sphere-dots">
+                        <!-- Dots will be generated by JavaScript -->
+                    </div>
+                </div>
+                <div class="voice-controls">
+                    <button class="control-btn cancel-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <span class="status-text">Muted</span>
+                    <button class="control-btn mic-btn muted">
+                        <i class="fas fa-microphone-slash"></i>
                     </button>
                 </div>
-                <div class="input-actions">
-                    <button id="clearButton" class="action-button">
-                        <i class="fas fa-trash"></i>
-                        Təmizlə
-                    </button>
-                </div>
             </div>
-        </main>
+        </div>
 
-        <!-- Loading Overlay -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-spinner">
-                <div class="spinner"></div>
-                <p>AI cavab hazırlayır...</p>
+        <!-- Chat Screen -->
+        <div class="chat-screen" id="chatScreen" style="display: none;">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
             </div>
+        </div>
+    </main>
+
+    <!-- Input Bar -->
+    <div class="input-bar">
+        <div class="input-container">
+            <button class="input-btn camera-btn">
+                <i class="fas fa-camera"></i>
+            </button>
+            <input type="text" id="searchInput" placeholder="Ask anything..." class="search-input">
+            <button class="input-btn voice-btn">
+                <i class="fas fa-microphone"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-screen="home">
+            <i class="fas fa-search"></i>
+        </button>
+        <button class="nav-btn" data-screen="discover">
+            <i class="fas fa-globe"></i>
+        </button>
+        <button class="nav-btn" data-screen="explore">
+            <i class="fas fa-compass"></i>
+        </button>
+        <button class="nav-btn" data-screen="focus">
+            <i class="fas fa-crosshairs"></i>
+        </button>
+    </nav>
+
+    <!-- System Navigation Bar -->
+    <div class="system-nav">
+        <div class="system-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="system-btn">
+            <i class="fas fa-circle"></i>
+        </div>
+        <div class="system-btn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>AI cavab hazırlayır...</p>
         </div>
     </div>
 
