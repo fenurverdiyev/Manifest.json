@@ -3,63 +3,264 @@ const GEMINI_API_KEY = 'AIzaSyAE98X1gnvNLaTu-oBJXVBraAY_vij61sY';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 // DOM Elements
-const welcomeSection = document.getElementById('welcomeSection');
-const chatContainer = document.getElementById('chatContainer');
-const messagesContainer = document.getElementById('messages');
-const userInput = document.getElementById('userInput');
-const sendButton = document.getElementById('sendButton');
-const clearButton = document.getElementById('clearButton');
+const homeScreen = document.getElementById('homeScreen');
+const discoverScreen = document.getElementById('discoverScreen');
+const voiceScreen = document.getElementById('voiceScreen');
+const chatScreen = document.getElementById('chatScreen');
+const chatMessages = document.getElementById('chatMessages');
+const searchInput = document.getElementById('searchInput');
 const loadingOverlay = document.getElementById('loadingOverlay');
+
+// Navigation elements
+const navButtons = document.querySelectorAll('.nav-btn');
+const tabs = document.querySelectorAll('.tab');
+
+// Input elements
+const cameraBtn = document.querySelector('.camera-btn');
+const voiceBtn = document.querySelector('.voice-btn');
+const micBtn = document.querySelector('.mic-btn');
+const cancelBtn = document.querySelector('.cancel-btn');
+
+// Voice elements
+const sphereDots = document.querySelector('.sphere-dots');
+const statusText = document.querySelector('.status-text');
 
 // Chat State
 let conversationHistory = [];
 let isGenerating = false;
+let currentScreen = 'home';
+let isRecording = false;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
-    adjustTextareaHeight();
+    generateSphereDots();
+    updateTime();
+    setInterval(updateTime, 60000); // Update time every minute
 });
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Send button click
-    sendButton.addEventListener('click', handleSendMessage);
-    
-    // Enter key press (Shift+Enter for new line)
-    userInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
+    // Navigation
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const screen = btn.dataset.screen;
+            switchScreen(screen);
+        });
+    });
+
+    // Tab navigation
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+    // Search input
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
             e.preventDefault();
-            handleSendMessage();
+            handleSearch();
+        }
+    });
+
+    // Camera button
+    cameraBtn.addEventListener('click', handleCameraInput);
+
+    // Voice button
+    voiceBtn.addEventListener('click', () => {
+        switchScreen('voice');
+    });
+
+    // Microphone button
+    micBtn.addEventListener('click', toggleRecording);
+
+    // Cancel button
+    cancelBtn.addEventListener('click', () => {
+        switchScreen('home');
+    });
+
+    // Focus on search input
+    searchInput.focus();
+}
+
+// Switch between screens
+function switchScreen(screen) {
+    // Hide all screens
+    homeScreen.style.display = 'none';
+    discoverScreen.style.display = 'none';
+    voiceScreen.style.display = 'none';
+    chatScreen.style.display = 'none';
+
+    // Remove active class from all nav buttons
+    navButtons.forEach(btn => btn.classList.remove('active'));
+
+    // Show selected screen
+    switch(screen) {
+        case 'home':
+            homeScreen.style.display = 'flex';
+            document.querySelector('[data-screen="home"]').classList.add('active');
+            break;
+        case 'discover':
+            discoverScreen.style.display = 'block';
+            document.querySelector('[data-screen="discover"]').classList.add('active');
+            break;
+        case 'explore':
+            // For now, show discover screen for explore
+            discoverScreen.style.display = 'block';
+            document.querySelector('[data-screen="explore"]').classList.add('active');
+            break;
+        case 'focus':
+            // For now, show chat screen for focus
+            chatScreen.style.display = 'block';
+            document.querySelector('[data-screen="focus"]').classList.add('active');
+            break;
+        case 'voice':
+            voiceScreen.style.display = 'flex';
+            break;
+        case 'chat':
+            chatScreen.style.display = 'block';
+            break;
+    }
+
+    currentScreen = screen;
+}
+
+// Handle search input
+async function handleSearch() {
+    const query = searchInput.value.trim();
+    
+    if (!query || isGenerating) return;
+
+    // Switch to chat screen
+    switchScreen('chat');
+    
+    // Add user message
+    addMessage(query, 'user');
+    
+    // Clear input
+    searchInput.value = '';
+    
+    // Generate AI response
+    await generateAIResponse(query);
+}
+
+// Handle camera input
+function handleCameraInput() {
+    // Create file input for camera
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.capture = 'camera';
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // For now, just show a message about image processing
+            addMessage(`Şəkil yükləndi: ${file.name}`, 'user');
+            addMessage('Şəkil analizi funksiyası tezliklə əlavə olunacaq.', 'ai');
         }
     });
     
-    // Auto-resize textarea
-    userInput.addEventListener('input', adjustTextareaHeight);
-    
-    // Clear conversation
-    clearButton.addEventListener('click', clearConversation);
-    
-    // Focus on input
-    userInput.focus();
+    fileInput.click();
 }
 
-// Handle sending a message
-async function handleSendMessage() {
-    const message = userInput.value.trim();
+// Toggle voice recording
+function toggleRecording() {
+    if (isRecording) {
+        stopRecording();
+    } else {
+        startRecording();
+    }
+}
+
+// Start voice recording
+function startRecording() {
+    isRecording = true;
+    micBtn.classList.remove('muted');
+    micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+    statusText.textContent = 'Dinlənir...';
     
-    if (!message || isGenerating) return;
+    // Animate sphere dots
+    animateSphereDots();
     
-    // Add user message to chat
-    addMessage(message, 'user');
+    // Simulate voice recognition (in real app, use Web Speech API)
+    setTimeout(() => {
+        const recognizedText = "Salam, necəsən?";
+        stopRecording();
+        
+        // Switch to chat and add message
+        switchScreen('chat');
+        addMessage(recognizedText, 'user');
+        generateAIResponse(recognizedText);
+    }, 3000);
+}
+
+// Stop voice recording
+function stopRecording() {
+    isRecording = false;
+    micBtn.classList.add('muted');
+    micBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+    statusText.textContent = 'Muted';
     
-    // Clear input and hide welcome section
-    userInput.value = '';
-    adjustTextareaHeight();
-    hideWelcomeSection();
+    // Stop sphere animation
+    stopSphereAnimation();
+}
+
+// Generate sphere dots for voice screen
+function generateSphereDots() {
+    const dotCount = 50;
+    sphereDots.innerHTML = '';
     
-    // Generate AI response
-    await generateAIResponse(message);
+    for (let i = 0; i < dotCount; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (Math.random() > 0.7) {
+            dot.classList.add('blue');
+        }
+        
+        // Random position on sphere
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const radius = 80 + Math.random() * 20;
+        
+        const x = radius * Math.sin(phi) * Math.cos(theta);
+        const y = radius * Math.sin(phi) * Math.sin(theta);
+        const z = radius * Math.cos(phi);
+        
+        dot.style.left = `calc(50% + ${x}px)`;
+        dot.style.top = `calc(50% + ${y}px)`;
+        dot.style.animationDelay = `${Math.random() * 2}s`;
+        
+        sphereDots.appendChild(dot);
+    }
+}
+
+// Animate sphere dots during recording
+function animateSphereDots() {
+    const dots = sphereDots.querySelectorAll('.dot');
+    dots.forEach(dot => {
+        dot.style.animation = 'pulse 0.5s infinite';
+    });
+}
+
+// Stop sphere animation
+function stopSphereAnimation() {
+    const dots = sphereDots.querySelectorAll('.dot');
+    dots.forEach(dot => {
+        dot.style.animation = 'pulse 2s infinite';
+    });
+}
+
+// Update time display
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('az-AZ', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    document.querySelector('.time').textContent = timeString;
 }
 
 // Add message to chat
@@ -77,19 +278,11 @@ function addMessage(content, type = 'user') {
         messageContent.textContent = content;
     }
     
-    const messageTime = document.createElement('div');
-    messageTime.className = 'message-time';
-    messageTime.textContent = new Date().toLocaleTimeString('az-AZ', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    });
-    
     messageDiv.appendChild(messageContent);
-    messageDiv.appendChild(messageTime);
-    messagesContainer.appendChild(messageDiv);
+    chatMessages.appendChild(messageDiv);
     
     // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    chatMessages.scrollTop = chatMessages.scrollHeight;
     
     // Add to conversation history
     conversationHistory.push({
@@ -179,26 +372,12 @@ function setGenerating(generating) {
     
     if (generating) {
         loadingOverlay.classList.add('active');
-        sendButton.disabled = true;
-        userInput.disabled = true;
+        searchInput.disabled = true;
     } else {
         loadingOverlay.classList.remove('active');
-        sendButton.disabled = false;
-        userInput.disabled = false;
-        userInput.focus();
+        searchInput.disabled = false;
+        searchInput.focus();
     }
-}
-
-// Hide welcome section and show chat
-function hideWelcomeSection() {
-    welcomeSection.style.display = 'none';
-    chatContainer.classList.add('active');
-}
-
-// Show welcome section and hide chat
-function showWelcomeSection() {
-    welcomeSection.style.display = 'flex';
-    chatContainer.classList.remove('active');
 }
 
 // Clear conversation
@@ -207,24 +386,9 @@ function clearConversation() {
     
     if (confirm('Danışıq tarixçəsini təmizləmək istədiyinizə əminsiniz?')) {
         conversationHistory = [];
-        messagesContainer.innerHTML = '';
-        showWelcomeSection();
-        userInput.focus();
+        chatMessages.innerHTML = '';
+        switchScreen('home');
     }
-}
-
-// Auto-resize textarea based on content
-function adjustTextareaHeight() {
-    userInput.style.height = 'auto';
-    userInput.style.height = Math.min(userInput.scrollHeight, 150) + 'px';
-}
-
-// Utility function to get current time
-function getCurrentTime() {
-    return new Date().toLocaleTimeString('az-AZ', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    });
 }
 
 // Error handling for network issues
