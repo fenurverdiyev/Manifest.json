@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perplexity AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .welcome-content p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .chat-container.active {
+            display: block;
+        }
+
+        .messages {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 1rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        /* Message Styles */
+        .message {
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message.ai {
+            text-align: left;
+        }
+
+        .message-content {
+            display: inline-block;
+            max-width: 80%;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai .message-content {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        /* Input Section */
+        .input-section {
+            padding: 1rem 0 2rem;
+            border-top: 1px solid #e9ecef;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+            min-height: 50px;
+            max-height: 150px;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .input-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .action-button {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .loading-spinner p {
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header {
+                border-radius: 0;
+                padding: 1.5rem 1rem 1rem;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .main {
+                padding: 0 1rem;
+            }
+            
+            .welcome-content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .message-content {
+                max-width: 90%;
+            }
+            
+            .input-container {
+                gap: 0.5rem;
+            }
+            
+            #userInput {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .send-button {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        .error-message {
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-search"></i>
+                <h1>Perplexity</h1>
+            </div>
+            <div class="tagline">Where knowledge begins</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Welcome Section -->
+            <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-content">
+                    <h2>Hər hansı bir şey soruşun...</h2>
+                    <p>AI-dan istədiyiniz hər hansı sualın cavabını alın</p>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <div class="messages" id="messages"></div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-container">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Sualınızı yazın..." 
+                        rows="1"
+                        maxlength="1000"
+                    ></textarea>
+                    <button id="sendButton" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-actions">
+                    <button id="clearButton" class="action-button">
+                        <i class="fas fa-trash"></i>
+                        Təmizlə
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>AI cavab hazırlayır...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gemini API Configuration
+        const GEMINI_API_KEY = 'AIzaSyAE98X1gnvNLaTu-oBJXVBraAY_vij61sY';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+        // DOM Elements
+        const welcomeSection = document.getElementById('welcomeSection');
+        const chatContainer = document.getElementById('chatContainer');
+        const messagesContainer = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Chat State
+        let conversationHistory = [];
+        let isGenerating = false;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            adjustTextareaHeight();
+            console.log('🚀 Perplexity AI tətbiqi yükləndi');
+        });
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Send button click
+            sendButton.addEventListener('click', handleSendMessage);
+            
+            // Enter key press (Shift+Enter for new line)
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+            
+            // Auto-resize textarea
+            userInput.addEventListener('input', adjustTextareaHeight);
+            
+            // Clear conversation
+            clearButton.addEventListener('click', clearConversation);
+            
+            // Focus on input
+            userInput.focus();
+        }
+
+        // Handle sending a message
+        async function handleSendMessage() {
+            const message = userInput.value.trim();
+            
+            if (!message || isGenerating) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Clear input and hide welcome section
+            userInput.value = '';
+            adjustTextareaHeight();
+            hideWelcomeSection();
+            
+            // Generate AI response
+            await generateAIResponse(message);
+        }
+
+        // Add message to chat
+        function addMessage(content, type = 'user') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            if (type === 'ai') {
+                // Format AI responses with basic markdown support
+                messageContent.innerHTML = formatMessage(content);
+            } else {
+                messageContent.textContent = content;
+            }
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.textContent = new Date().toLocaleTimeString('az-AZ', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageTime);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Add to conversation history
+            conversationHistory.push({
+                role: type === 'user' ? 'user' : 'model',
+                parts: [{ text: content }]
+            });
+        }
+
+        // Generate AI response using Gemini API
+        async function generateAIResponse(userMessage) {
+            setGenerating(true);
+            
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                role: 'user',
+                                parts: [{ text: userMessage }]
+                            }
+                        ],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024,
+                        },
+                        safetySettings: [
+                            {
+                                category: "HARM_CATEGORY_HARASSMENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_HATE_SPEECH",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            },
+                            {
+                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API sorğusu uğursuz oldu: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    addMessage(aiResponse, 'ai');
+                } else if (data.error) {
+                    throw new Error(`API xətası: ${data.error.message || 'Naməlum xəta'}`);
+                } else {
+                    throw new Error('Gözlənilməz API cavab formatı');
+                }
+                
+            } catch (error) {
+                console.error('Gemini API xətası:', error);
+                
+                let errorMessage = 'Üzr istəyirik, bir xəta baş verdi. ';
+                
+                if (error.message.includes('403')) {
+                    errorMessage += 'API key problemi ola bilər. Zəhmət olmasa key-i yoxlayın.';
+                } else if (error.message.includes('404')) {
+                    errorMessage += 'API endpoint tapılmadı.';
+                } else if (error.message.includes('429')) {
+                    errorMessage += 'Çox sorğu göndərildi. Bir az gözləyin.';
+                } else if (error.message.includes('network') || error.message.includes('CORS')) {
+                    errorMessage += 'İnternet bağlantısını yoxlayın.';
+                } else {
+                    errorMessage += 'Zəhmət olmasa yenidən cəhd edin.';
+                }
+                
+                addMessage(errorMessage, 'ai');
+            } finally {
+                setGenerating(false);
+            }
+        }
+
+        // Format message with basic markdown support
+        function formatMessage(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>')
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+        }
+
+        // Set generating state
+        function setGenerating(generating) {
+            isGenerating = generating;
+            
+            if (generating) {
+                loadingOverlay.classList.add('active');
+                sendButton.disabled = true;
+                userInput.disabled = true;
+            } else {
+                loadingOverlay.classList.remove('active');
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Hide welcome section and show chat
+        function hideWelcomeSection() {
+            welcomeSection.style.display = 'none';
+            chatContainer.classList.add('active');
+        }
+
+        // Show welcome section and hide chat
+        function showWelcomeSection() {
+            welcomeSection.style.display = 'flex';
+            chatContainer.classList.remove('active');
+        }
+
+        // Clear conversation
+        function clearConversation() {
+            if (conversationHistory.length === 0) return;
+            
+            if (confirm('Danışıq tarixçəsini təmizləmək istədiyinizə əminsiniz?')) {
+                conversationHistory = [];
+                messagesContainer.innerHTML = '';
+                showWelcomeSection();
+                userInput.focus();
+            }
+        }
+
+        // Auto-resize textarea based on content
+        function adjustTextareaHeight() {
+            userInput.style.height = 'auto';
+            userInput.style.height = Math.min(userInput.scrollHeight, 150) + 'px';
+        }
+
+        // Error handling for network issues
+        window.addEventListener('online', function() {
+            console.log('İnternet bağlantısı bərpa olundu');
+        });
+
+        window.addEventListener('offline', function() {
+            console.log('İnternet bağlantısı kəsildi');
+            if (isGenerating) {
+                setGenerating(false);
+                addMessage('İnternet bağlantısı kəsildi. Zəhmət olmasa bağlantınızı yoxlayın.', 'ai');
+            }
+        });
+    </script>
+</body>
+</html>
